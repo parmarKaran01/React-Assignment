@@ -25,7 +25,9 @@ const historySlice = createSlice({
   initialState: initialState,
   reducers: {
     addVideoToHistory(state, action) {
-      state.historyList.push(action.payload);
+      if (!state.historyList.find((item) => item.id === action.payload.id)) {
+        state.historyList.push(action.payload);
+      }
     },
   },
 });

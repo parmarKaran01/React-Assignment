@@ -10,13 +10,19 @@ import {
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useMutation } from "react-query";
+import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { bucketStateSelector, updateBucketChildren } from "../config/bucketSlice";
 import { cardStateSelector } from "../config/cardSlice";
 
 const EditPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const {buckets} = useSelector(bucketStateSelector);
   const { id } = useParams();
+  const {state} = useLocation()
+  const parentId = state.parentId
   const { cardList } = useSelector(cardStateSelector);
   const [name, setName] = useState("");
   const [videoURL, setVideoURL] = useState("");
@@ -29,6 +35,15 @@ const EditPage = () => {
       videoURL,
     };
 
+    const newState = JSON.parse(JSON.stringify(buckets))
+    newState[parentId].items.map((val) => {
+      if(val.id === id){
+        val.name = name,
+        val.videoURL = videoURL
+      }
+    })
+    console.log(newState)
+dispatch(updateBucketChildren(newState))
     mutate(payload);
   };
 

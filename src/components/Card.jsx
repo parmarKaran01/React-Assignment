@@ -4,15 +4,18 @@ import axios from "axios";
 import { useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import { useMutation } from "react-query";
+import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { bucketStateSelector, updateBucket } from "../config/bucketSlice";
 import { fetchCardList } from "../config/thunk";
 import { CardModal } from "./CardModal";
 
-export default function CardComponent({ data, index }) {
+export default function CardComponent({ data, index, parentId }) {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const {buckets} = useSelector(bucketStateSelector)
 
   const deleteCard = async (id) => {
     await axios.delete(`http://localhost:8000/cardList/${id}`);
@@ -33,16 +36,29 @@ export default function CardComponent({ data, index }) {
   });
 
   const handleDelete = (id) => {
+    const newState = JSON.parse(JSON.stringify(buckets))
+    newState[parentId].items = newState[parentId].items.filter((val) => val.id !== id) 
+    console.log("This is the element after deleting", newState)
+    dispatch(updateBucket(newState))
     mutate(id);
   };
 
   const handleEdit = (id) => {
-    navigate(`editCard/${data.id}`);
+    navigate(`editCard/${data.id}`, {
+      state: {
+        parentId: parentId,
+      },
+    });
   };
   return (
     <Draggable draggableId={data.id} index={index}>
       {(provided) => (
-        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className="py-2">
+        <div
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          className="py-2"
+        >
           <CardModal open={open} setOpen={setOpen} data={data} />
           <Card
             style={{

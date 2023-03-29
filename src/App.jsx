@@ -18,108 +18,144 @@ import { cardStateSelector } from "./config/cardSlice";
 import { historyStateSelector } from "./config/historySlice";
 import { HistoryCard } from "./components/HistoryCard";
 import { Close } from "@mui/icons-material";
-
-export const removeFromList = (list, index) => {
-  const result = Array.from(list.items);
-  console.log("ascnanc result", result);
-  const [removed] = result.splice(index, 1);
-  const newList = {
-    ...list,
-    items: result,
-  };
-  return [removed, newList];
-};
-
-export const addToList = (list, index, element) => {
-  const result = Array.from(list.items);
-  result.splice(index, 0, element);
-  const newList = {
-    ...list,
-    items: result,
-  };
-  return newList;
-};
-const onDragEnd = (result, bucks, setBucks) => {
-  const { source, destination } = result;
-
-  if (!destination) return;
-  if (destination.droppableId === source.droppableId) return;
-  if (
-    destination.droppableId === source.droppableId &&
-    destination.index === source.index
-  )
-    return;
-
-  const listCopy = { ...bucks };
-
-  const sourceList = listCopy[source.droppableId];
-  console.log("source list", sourceList);
-  const [removedElement, newSourceList] = removeFromList(
-    sourceList,
-    source.index
-  );
-
-  console.log("++++++", newSourceList, "0000", removedElement);
-
-  listCopy[source.droppableId] = newSourceList;
-
-  const destinationList = listCopy[result.destination.droppableId];
-  listCopy[result.destination.droppableId] = addToList(
-    destinationList,
-    result.destination.index,
-    removedElement
-  );
-
-  setBucks(listCopy);
-};
+import { useDispatch } from "react-redux";
+import {
+  addBucket,
+  bucketStateSelector,
+  updateBucket,
+  updateBucketChildren,
+  updateItems,
+} from "./config/bucketSlice";
+import { fetchCardList } from "./config/thunk";
 
 function App() {
   const { cardList } = useSelector(cardStateSelector);
   const { historyList } = useSelector(historyStateSelector);
+  const { buckets } = useSelector(bucketStateSelector);
+  const dispatch = useDispatch();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   console.log("This is the card list ", cardList);
+
+  const removeFromList = (list, index, listCopy, parentId) => {
+    const result = Array.from(list.items);
+    console.log("ascnanc result", result);
+    const [removed] = result.splice(index, 1);
+    const newList = {
+      ...list,
+      items: result,
+    };
+
+    dispatch(updateItems({parentId, newList}))
+    return [removed, newList];
+  };
+
+  const addToList = (list, index, element) => {
+    const result = Array.from(list.items);
+    result.splice(index, 0, element);
+    const newList = {
+      ...list,
+      items: result,
+    };
+    return newList;
+  };
+  const onDragEnd = (result, bucks, setBucks) => {
+    const { source, destination } = result;
+
+    if (!destination) return;
+    if (destination.droppableId === source.droppableId) return;
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    )
+      return;
+
+    const listCopy = { ...bucks };
+
+    const sourceList = listCopy[source.droppableId];
+    console.log("source list", sourceList);
+    const [removedElement, newSourceList] = removeFromList(
+      sourceList,
+      source.index,
+      listCopy,
+      source.droppableId
+    );
+  
+
+    console.log("++++++", newSourceList, "0000", removedElement);
+
+    listCopy[source.droppableId] = newSourceList;
+
+    const destinationList = listCopy[result.destination.droppableId];
+    listCopy[result.destination.droppableId] = addToList(
+      destinationList,
+      result.destination.index,
+      removedElement
+    );
+
+    dispatch(setBucks(listCopy));
+  };
 
   const handleDrawerClose = () => {
     setDrawerOpen(false);
   };
 
   const navigate = useNavigate();
-
-  const [bucks, setBucks] = useState({
-    [uuidv4()]: {
-      name: "main",
-      items: cardList,
-    },
-  });
+  const bucketsCopy = JSON.parse(JSON.stringify(buckets));
+  const [bucks, setBucks] = useState(bucketsCopy);
   useEffect(() => {
-    setBucks((prev) => {
-      console.log("this is the prev state", prev);
-      const newObj = Object.assign({}, prev);
-      if (newObj[Object.keys(prev)].items) {
-        newObj[Object.keys(prev)].items = cardList;
-        console.log("This is the new Obj", newObj, "cardList", cardList);
-        return {
-          ...newObj,
-        };
-      }
-    });
-  }, [cardList]);
+    // setBucks((prev) => {
+    //   console.log("this is the prev state", prev);
+    //   const newObj = Object.assign({}, prev);
+    //   if (newObj[Object.keys(prev)]) {
+    //     newObj[Object.keys(prev)].items = cardList;
+    //     console.log("This is the new Obj", newObj, "cardList", cardList);
+    //     return {
+    //       ...newObj,
+    //     };
+    //   }
+    // });
+
+    // const deepBucket = JSON.parse(JSON.stringify(buckets));
+    // const newBucket = {
+    //   ...deepBucket,
+
+    // }
+
+    // const finalObj = {
+    //   ...newBucket.mainList,
+    //   items: cardList
+    // }
+    // deepBucket.mainList.items = cardList;
+    // console.log("12729393", deepBucket);
+    dispatch(fetchCardList())
+    // dispatch(updateBucket(deepBucket));
+    // dispatch(updateBucketChildren(() => ))
+  }, []);
 
   const [bucketName, setBucketName] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
     if (bucketName.length > 0) {
-      setBucks((prev) => {
-        return {
-          ...prev,
+      // setBucks((prev) => {
+      //   return {
+      //     ...prev,
+      //     [uuidv4()]: {
+      //       name: bucketName,
+      //       items: [],
+      //     },
+      //   };
+      // });
+
+      dispatch(
+        addBucket({
           [uuidv4()]: {
             name: bucketName,
             items: [],
           },
-        };
-      });
+        })
+      );
       setBucketName("");
     }
   };
@@ -127,7 +163,7 @@ function App() {
   return (
     <DragDropContext
       onDragEnd={(result) => {
-        onDragEnd(result, bucks, setBucks);
+        onDragEnd(result, buckets, updateBucket);
       }}
     >
       <div className="w-full mt-12 px-12">

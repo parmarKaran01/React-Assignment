@@ -3,12 +3,15 @@ import { Card, CardContent, Stack, TextField } from "@mui/material";
 import axios from "axios";
 import React, { useState } from "react";
 import { useMutation } from "react-query";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
+import { fetchCardList } from "../config/thunk";
 
 const CreateCard = () => {
   const [name, setName] = useState("");
   const [videoURL, setVideoURL] = useState("");
+  const dispatch = useDispatch()
   const navigate = useNavigate();
   const createNewCard = async (payload) => {
     const res = await axios.post("http://localhost:8000/cardList", payload);
@@ -19,7 +22,9 @@ const CreateCard = () => {
       console.log(data);
       setName("");
       setVideoURL("");
+      dispatch(fetchCardList())
       navigate("/");
+      
     },
 
     onError: (data) => {

@@ -40,7 +40,11 @@ export const CardModal = ({ open, setOpen, data }) => {
               width={500}
               height={300}
               onPlay={() => {
-                dispatch(addVideoToHistory(data));
+                const payload = {
+                  ...data,
+                  timeStamp : new Date().getTime()
+                }
+                dispatch(addVideoToHistory(payload));
               }}
             ></ReactPlayer>
           </div>

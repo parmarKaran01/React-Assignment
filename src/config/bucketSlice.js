@@ -1,42 +1,62 @@
-// import { createSlice } from "@reduxjs/toolkit";
-// import { fetchCardList } from "./thunk";
+import { createSlice, current } from "@reduxjs/toolkit";
+import { v4 as uuidv4 } from "uuid";
+import { fetchCardList } from "./thunk";
 
-// const initialState = {
-//   buckets: [
-//     {
-//       name: "Entertainment",
-//       children: [
-//         {
-//           id: "d32318d2-8f93-4a3c-8436-d78a0aefa1da",
-//           name: "Rahul Subramanian | Crowd Work in London | Part 1",
-//           videoURL: "https://www.youtube.com/watch?v=BfwUjNr5QCs",
-//         },
-//         {
-//           id: "5818f27a-e57a-47c5-a795-45dd2bb35416",
-//           name: "Learn useCallback In 8 Minutes",
-//           videoURL: "https://www.youtube.com/watch?v=_AyFP5s69N4",
-//         },
-//       ],
-//     },
-//   ],
-// };
+const initialState = {
+  buckets: {
+    ["mainList"]: {
+      name: "main",
+      items: [],
+    },
+  },
 
-// const bucketSlice = createSlice({
-//   name: "bucketSlice",
-//   initialState: initialState,
-//   reducers: {
-//     addBucket(state, action) {
-//       state.buckets.push(action.payload);
-//     },
-//     updateBucketChildren(state, action) {
-//       state.buckets.children.push = action.payload;
-//     },
-//     removeBucketChildren(state, action) {
-//       state.buckets.children.filter((item) => item.id !== action.payload);
-//     },
-//   },
-// });
+  cardListLoading : false,
+  cardListError : false,
+};
 
-// export const bucketStateSelector = (state) => state.bucketSlice;
-// export const {addBucket, updateBucketChildren, removeBucketChildren} = bucketSlice.actions
-// export default bucketSlice.reducer;
+const bucketSlice = createSlice({
+  name: "bucketSlice",
+  initialState: initialState,
+  reducers: {
+    addBucket(state, action) {
+      const payload = action.payload;
+      const newState = { ...state.buckets, ...payload };
+      state.buckets = newState;
+    },
+    updateBucketChildren(state, action) {
+      state.buckets = action.payload;
+    },
+    updateItems(state, action) {
+      const newObj = current(state.buckets);
+      console.log("into fhiashia scascoiahsoicasic", newObj);
+
+      if (newObj.buckets) {
+        newObj.buckets[action.payload.parentId].items = action.payload.newList;
+        // state.buckets[action.payload.parentId].items = action.payload.newList;
+        
+      }
+      state.buckets = newObj
+    },
+    updateBucket(state, action) {
+      state.buckets = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(fetchCardList.pending, (state) => {
+      state.cardListLoading = true;
+    })
+    .addCase(fetchCardList.rejected, (state) => {
+      state.cardListError = true
+    })
+
+    .addCase(fetchCardList.fulfilled, (state, action) => {
+      state.buckets["mainList"].items = action.payload
+      state.cardListLoading = false
+    })
+  }
+});
+
+export const bucketStateSelector = (state) => state.bucketSlice;
+export const { addBucket, updateBucketChildren, updateItems, updateBucket } =
+  bucketSlice.actions;
+export default bucketSlice.reducer;
