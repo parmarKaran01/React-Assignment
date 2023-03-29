@@ -33,6 +33,7 @@ const EditPage = () => {
       id: id,
       name,
       videoURL,
+      bucketId: parentId,
     };
 
     const newState = JSON.parse(JSON.stringify(buckets))

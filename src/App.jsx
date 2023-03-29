@@ -27,6 +27,7 @@ import {
   updateItems,
 } from "./config/bucketSlice";
 import { fetchCardList } from "./config/thunk";
+import axios from "axios";
 
 function App() {
   const { cardList } = useSelector(cardStateSelector);
@@ -51,13 +52,36 @@ function App() {
     return [removed, newList];
   };
 
-  const addToList = (list, index, element) => {
+  const editCard = async (id,payload) => {
+    const res = await axios.put(
+      `http://localhost:8000/cardList/${id}`,
+      payload
+    );
+    return res.data;
+  };
+
+  const addToList = (list, index, element, droppableId) => {
+
+    
+    const newElement = {
+      ...element,
+      bucketId: droppableId,
+    }
+    // dispatch
+    console.log("element", newElement)
     const result = Array.from(list.items);
-    result.splice(index, 0, element);
+    result.splice(index, 0, newElement);
     const newList = {
       ...list,
       items: result,
     };
+    const newState = JSON.parse(JSON.stringify(buckets))
+    newState[droppableId].items = newList
+    dispatch(updateBucketChildren(newState))
+    editCard(newElement.id,newElement)
+    
+    
+    console.log("this is the new list", newList)
     return newList;
   };
   const onDragEnd = (result, bucks, setBucks) => {
@@ -91,8 +115,10 @@ function App() {
     listCopy[result.destination.droppableId] = addToList(
       destinationList,
       result.destination.index,
-      removedElement
+      removedElement,
+      destination.droppableId,
     );
+   
 
     dispatch(setBucks(listCopy));
   };

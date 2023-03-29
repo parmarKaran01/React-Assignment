@@ -1,50 +1,9 @@
 {
   "cardList": [
     {
-      "id": "173b7bc1-6a1e-4f89-9917-1dd1b5c87747",
-      "name": "Health Anxiety - Standup Comedy by Abhishek Upmanyu (Full Special on YT)",
-      "videoURL": "https://www.youtube.com/watch?v=_fWyWcZB7VA",
-      "bucketId": "mainList"
-    },
-    {
-      "id": "1090ea77-82fd-4956-b988-803340eb22b9",
-      "name": "\"How The British Took Over India\" - TREVOR NOAH (from \"Afraid Of The Dark\" on Netflix)",
-      "videoURL": "https://www.youtube.com/watch?v=QhMO5SSmiaA",
-      "bucketId": "mainList"
-    },
-    {
-      "id": "d54d3b62-f0be-4a4a-89c2-4d2cd8a99c9c",
-      "name": "Did He Really Fix TypeScript?",
-      "videoURL": "https://www.youtube.com/watch?v=C_v0fcGEGbA"
-    },
-    {
-      "id": "2b236633-db56-486b-ba6f-bf4e67c9186b",
-      "name": "test 10",
-      "videoURL": "none",
-      "bucketId": "mainList"
-    },
-    {
-      "id": "9a153946-4c27-4503-9b65-bbb660bb647e",
-      "name": "hello world",
-      "videoURL": "none",
-      "bucketId": "mainList"
-    },
-    {
-      "id": "67886e5f-26f0-4d37-b013-ba85eb840663",
-      "name": "test 20",
-      "videoURL": "none",
-      "bucketId": "mainList"
-    },
-    {
-      "id": "1fdd0f37-cf49-4ade-b049-b205a8c796cf",
-      "name": "new video",
-      "videoURL": "https://www.youtube.com/watch?v=VRdRThFRFqg",
-      "bucketId": "mainList"
-    },
-    {
-      "id": "dce62074-83b3-4644-a55c-5e6f7a7823c2",
+      "id": "14338b17-e40d-4bf2-a8cb-a0929bc42fcd",
       "name": "test 4",
-      "videoURL": "https://www.youtube.com/watch?v=RI9kA09Egas",
+      "videoURL": "https://www.youtube.com/watch?v=UUga4-z7b6s",
       "bucketId": "mainList"
     }
   ]
