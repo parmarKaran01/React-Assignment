@@ -6,11 +6,12 @@ import { useMutation } from "react-query";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
+import { APP_URL } from "../config/constant";
 import { fetchCardList } from "../config/thunk";
 
 export const getCards = async() => {
   try{
-    const res = await axios.get("http://localhost:8000/cardList")
+    const res = await axios.get("http://localhost:3000/cardList")
     const data = res.data
     return data
   } catch(err) {
@@ -24,7 +25,7 @@ const CreateCard = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate();
   const createNewCard = async (payload) => {
-    const res = await axios.post("http://localhost:8000/cardList", payload);
+    const res = await axios.post(APP_URL, payload);
     return res.data;
   };
   const { mutate, isLoading} = useMutation(createNewCard, {

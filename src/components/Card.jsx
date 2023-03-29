@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { bucketStateSelector, updateBucket } from "../config/bucketSlice";
+import { APP_URL } from "../config/constant";
 import { fetchCardList } from "../config/thunk";
 import { CardModal } from "./CardModal";
 
@@ -18,7 +19,7 @@ export default function CardComponent({ data, index, parentId }) {
   const {buckets} = useSelector(bucketStateSelector)
 
   const deleteCard = async (id) => {
-    await axios.delete(`http://localhost:8000/cardList/${id}`);
+    await axios.delete(`${APP_URL}/${id}`);
   };
 
   const {

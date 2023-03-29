@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { bucketStateSelector, updateBucketChildren } from "../config/bucketSlice";
 import { cardStateSelector } from "../config/cardSlice";
+import { APP_URL } from "../config/constant";
 
 const EditPage = () => {
   const navigate = useNavigate();
@@ -57,7 +58,7 @@ dispatch(updateBucketChildren(newState))
 
   const editCard = async (payload) => {
     const res = await axios.put(
-      `http://localhost:8000/cardList/${id}`,
+      `${APP_URL}/${id}`,
       payload
     );
     return res.data;

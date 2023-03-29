@@ -28,6 +28,7 @@ import {
 } from "./config/bucketSlice";
 import { fetchCardList } from "./config/thunk";
 import axios from "axios";
+import { APP_URL } from "./config/constant";
 
 function App() {
   const { cardList } = useSelector(cardStateSelector);
@@ -54,7 +55,7 @@ function App() {
 
   const editCard = async (id,payload) => {
     const res = await axios.put(
-      `http://localhost:8000/cardList/${id}`,
+      `${APP_URL}/${id}`,
       payload
     );
     return res.data;
