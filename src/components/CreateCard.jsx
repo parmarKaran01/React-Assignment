@@ -8,6 +8,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { fetchCardList } from "../config/thunk";
 
+export const getCards = async() => {
+  try{
+    const res = await axios.get("http://localhost:8000/cardList")
+    const data = res.data
+    return data
+  } catch(err) {
+    console.log(err)
+  }
+}
+
 const CreateCard = () => {
   const [name, setName] = useState("");
   const [videoURL, setVideoURL] = useState("");
@@ -38,6 +48,7 @@ const CreateCard = () => {
       id: uuidv4(),
       name,
       videoURL,
+      bucketId : "mainList"
     };
 
     // createNewCard(payload);

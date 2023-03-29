@@ -10,8 +10,8 @@ const initialState = {
     },
   },
 
-  cardListLoading : false,
-  cardListError : false,
+  cardListLoading: false,
+  cardListError: false,
 };
 
 const bucketSlice = createSlice({
@@ -33,27 +33,41 @@ const bucketSlice = createSlice({
       if (newObj.buckets) {
         newObj.buckets[action.payload.parentId].items = action.payload.newList;
         // state.buckets[action.payload.parentId].items = action.payload.newList;
-        
       }
-      state.buckets = newObj
+      state.buckets = newObj;
     },
     updateBucket(state, action) {
       state.buckets = action.payload;
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchCardList.pending, (state) => {
-      state.cardListLoading = true;
-    })
-    .addCase(fetchCardList.rejected, (state) => {
-      state.cardListError = true
-    })
+    builder
+      .addCase(fetchCardList.pending, (state) => {
+        state.cardListLoading = true;
+      })
+      .addCase(fetchCardList.rejected, (state) => {
+        state.cardListError = true;
+      })
 
-    .addCase(fetchCardList.fulfilled, (state, action) => {
-      state.buckets["mainList"].items = action.payload
-      state.cardListLoading = false
-    })
-  }
+      .addCase(fetchCardList.fulfilled, (state, action) => {
+        // state.buckets["mainList"].items = action.payload
+        // const flattenArray = 
+        const newState = { ...state.buckets };
+        Object.entries(newState).map(([id, items]) => {
+          action.payload.map((val) => {
+            if (id === val.bucketId) {
+              if (!items.items.some((ele) => ele.id === val.id)) {
+                items.items.push(val);
+              }
+            }
+          });
+        });
+        console.log(newState);
+
+        state.buckets = newState;
+        state.cardListLoading = false;
+      });
+  },
 });
 
 export const bucketStateSelector = (state) => state.bucketSlice;

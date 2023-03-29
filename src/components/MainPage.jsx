@@ -5,6 +5,7 @@ import { useOutletContext } from "react-router-dom";
 import { cardStateSelector } from "../config/cardSlice";
 import {bucketStateSelector} from "../config/bucketSlice"
 import CardComponent from "./Card";
+import { getCards } from "./CreateCard";
 
 const MainPage = () => {
   const dispatch = useDispatch();
@@ -26,6 +27,7 @@ const MainPage = () => {
 
   useEffect(() => {
 console.log("checking how many time this page is called")
+console.log("This is the bucket list in the useEffect", bucks)
   }, [])
 
   if (cardListLoading) return <div>Loading....</div>;
